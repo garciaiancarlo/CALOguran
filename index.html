@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Campaign Envelope Animation</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    }
+
+    .envelope-container {
+      perspective: 1000px;
+    }
+
+    .envelope {
+      width: 500px;
+      height: 320px;
+      background: #ffffff;
+      border: 1px solid #e0e0e0;
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+      z-index: 1;
+      transition: all 0.4s ease;
+      transform-style: preserve-3d;
+    }
+
+    .envelope:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+
+    .flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 260px;
+      background: linear-gradient(145deg, #f1f3f5, #dee2e6);
+      transform-origin: top;
+      transition: transform 1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      z-index: 2;
+      clip-path: polygon(0 0, 100% 0, 50% 60%);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+    }
+
+    .message {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 92%;
+      height: 240px;
+      background: #fff;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #2b2d42;
+      transition: all 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) 0.5s;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      border-radius: 6px;
+      padding: 30px;
+      box-sizing: border-box;
+      font-family: 'Playfair Display', serif;
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .campaign-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .campaign-logo {
+      font-size: 36px;
+      font-weight: 700;
+      color: #d90429;
+      letter-spacing: 1px;
+      margin-right: 20px;
+    }
+
+    .candidate-photo {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #d90429;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      opacity: 0; /* Initially hidden */
+      transition: opacity 0.5s ease 1s; /* Appears after envelope opens */
+    }
+
+    .candidate-info {
+      text-align: left;
+    }
+
+    .candidate-name {
+      font-size: 24px;
+      font-weight: 600;
+      color: #2b2d42;
+      margin: 5px 0;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .candidate-title {
+      font-size: 18px;
+      color: #6c757d;
+      font-weight: 500;
+    }
+
+    .campaign-slogan {
+      font-size: 24px;
+      font-weight: 700;
+      color: #d90429;
+      margin-top: 18px;
+      padding: 10px 25px;
+      background: rgba(217, 4, 41, 0.1);
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .campaign-website {
+      font-size: 16px;
+      color: #6c757d;
+      margin-top: 15px;
+      font-weight: 500;
+    }
+
+    .envelope.open .flap {
+      transform: rotateX(180deg);
+    }
+
+    .envelope.open .message {
+      top: 35px;
+    }
+
+    .envelope.open .candidate-photo {
+      opacity: 1; /* Photo appears when envelope is open */
+    }
+
+    .seal {
+      position: absolute;
+      top: 120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 50px;
+      background: #d90429;
+      border-radius: 50%;
+      z-index: 3;
+      opacity: 0;
+      transition: opacity 0.5s ease 0.5s;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 22px;
+    }
+
+    .envelope.open .seal {
+      opacity: 1;
+    }
+
+    .corner {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border: 2px solid rgba(217, 4, 41, 0.3);
+      border-radius: 50%;
+    }
+
+    .corner-tl {
+      top: -20px;
+      left: -20px;
+    }
+
+    .corner-tr {
+      top: -20px;
+      right: -20px;
+    }
+
+    .corner-bl {
+      bottom: -20px;
+      left: -20px;
+    }
+
+    .corner-br {
+      bottom: -20px;
+      right: -20px;
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="envelope-container">
+    <div class="envelope" id="envelope">
+      <div class="corner corner-tl"></div>
+      <div class="corner corner-tr"></div>
+      <div class="corner corner-bl"></div>
+      <div class="corner corner-br"></div>
+      <div class="flap"></div>
+      <div class="message">
+        <div class="campaign-header">
+          <div class="campaign-logo">CALOguran</div>
+          <img src="https://scontent.fmnl40-2.fna.fbcdn.net/v/t39.30808-6/486643349_695954599432846_2507739766308966359_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=1drhE0CO_58Q7kNvwEQgTYq&_nc_oc=Adk4m9SieQNx82mSP5XcrE6XG2XIrdV6_IN0lFGKUwqVF_0esRXDpWUsW0kx12efi4M&_nc_zt=23&_nc_ht=scontent.fmnl40-2.fna&_nc_gid=Q-XLgdvumuTXRkNkGCpXjA&oh=00_AfHE4gK_sWmHUQsIXkGmmuBzby_qFkPduiUz9FmvoMFeIg&oe=6811434A" alt="Candidate Photo" class="candidate-photo">
+        </div>
+        <div class="candidate-info">
+          <div class="candidate-name">Reynan Serrano Calo</div>
+          <center><div class="candidate-title">Candidate for Mayor</div></center>
+        </div>
+        <div class="campaign-slogan">#1 For Mayor</div>
+        <br>
+        <div class="campaign-website">www.caloguran2024.com</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.onload = function() {
+      setTimeout(() => {
+        document.getElementById('envelope').classList.add('open');
+      }, 800);
+    }
+  </script>
+</body>
+</html>
